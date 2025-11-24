@@ -1,0 +1,2 @@
+# Ignore genereated protobuf go code
+**/*.pb.go

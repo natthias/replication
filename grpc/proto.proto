@@ -1,0 +1,72 @@
+syntax = "proto3";;
+option go_package = "Auction/grpc";
+
+message BidRequest {
+  int64 timestamp = 1;
+  string name = 2;
+  int64 bid = 3;
+}
+
+message BidResponse {
+  enum Ack {
+    SUCCESS = 0;
+    FAIL = 1;
+    EXCEPTION = 2;
+  }
+
+  int64 timestamp = 1;
+  Ack ack = 2;
+}
+
+message ResultResponse {
+  int64 timestamp = 1;
+  int64 bid = 2;
+  string name = 3;
+  bool isOver = 4;
+}
+
+message ResultRequest {
+  int64 timestamp = 1;
+}
+
+message ReplicateRequest {
+  int64 timestamp = 1;
+  string name = 2;
+  int64 bid = 3;
+  string currentWinner = 4;
+}
+
+message ReplicateStateRequest {
+  int64 timestamp = 1;
+  bool isAuctioning = 2;
+}
+
+message ElectRequest {
+  int64 timestamp = 1;
+  string port = 2;
+}
+
+message ElectResponse {
+  int64 timestamp = 1;
+  bool grant = 2;
+}
+
+message ReportLeaderRequest {
+  int64 timestamp = 1;
+  string port = 2;
+}
+
+message Empty {}
+
+service Auction {
+  rpc Bid(BidRequest) returns (BidResponse){}
+  rpc Result(ResultRequest) returns (ResultResponse){}
+}
+
+service AuctionNode {
+  rpc Heartbeat(Empty) returns (Empty){}
+  rpc Replicate(ReplicateRequest) returns (BidResponse){}
+  rpc ReplicateState(ReplicateStateRequest) returns (BidResponse){}
+  rpc ElectLeader(ElectRequest) returns (ElectResponse){}
+  rpc ReportLeader(ReportLeaderRequest) returns (Empty){}
+}
